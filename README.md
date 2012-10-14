@@ -8,7 +8,7 @@ Thin wrapper around Java Executors/Threads
 (use 'knit.core)
 ```
 
-Executor can be `:fixed` `:cached` `:single` `:scheduled`, matching the
+### Executor can be `:fixed` `:cached` `:single` `:scheduled`, matching the
 corresponding Java instances.
 
 ```Clojure
@@ -24,7 +24,7 @@ Submit a task to executor
 (execute x #(println "Hello World"))
 ```
 
-Create your own ThreadFactory.
+### Create your own ThreadFactory
 
 ```clojure
 (def tf (thread-factory))
@@ -34,7 +34,7 @@ With all options
 (def tf (thread-factory :thread-group a-thread-group :deamon false))
 ```
 
-Create ScheduledFuture instances:
+### Create ScheduledFuture instances
 
 ```clojure
 (schedule :at-fixed-rate 200 #(println "hello world"))
@@ -55,7 +55,7 @@ With all options:
 Time units are `:ns` `:us` `:ms` `:secs` `:mins` `:hours` `:days`.
 
 
-Future with configurable Execution context
+### Clojure like future with configurable execution context
 
 ```clojure
 
