@@ -55,6 +55,16 @@ With all options:
 Time units are `:ns` `:us` `:ms` `:secs` `:mins` `:hours` `:days`.
 
 
+Future with configurable Execution context
+
+```clojure
+
+(def x (executor :fixed :num-threads 3))
+
+(knit.core/future x (System/currentTimeMillis))
+(knit.core/future-call x #(System/currentTimeMillis))
+```
+
 ## License
 
 Copyright © 2012 Max Penet

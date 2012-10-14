@@ -1,4 +1,5 @@
 (ns knit.core
+  (:refer-clojure :exclude [future future-call])
   (:import [java.util.concurrent Executors ExecutorService Future
             ScheduledExecutorService ScheduledFuture ScheduledThreadPoolExecutor
             ThreadFactory TimeUnit]))
@@ -47,7 +48,7 @@ corresponding Java instances"
   (case type
     :single (Executors/newSingleThreadExecutor thread-factory)
     :cached  (Executors/newCachedThreadPool thread-factory)
-    :fixed  (Executors/newFixedThreadPool thread-factory (int num-threads))
+    :fixed  (Executors/newFixedThreadPool (int num-threads) thread-factory)
     :scheduled (Executors/newScheduledThreadPool (int num-threads) thread-factory)))
 
 (defn schedule
@@ -83,3 +84,62 @@ corresponding Java instances"
                        ^Runnable f
                        ^long delay
                        ^TimeUnit (time-units unit)))))
+
+
+;; Almost identical copies of clojure.core future, only difference is
+;; the executor parameter
+
+(defn ^:private binding-conveyor-fn
+  [f]
+  (let [frame (clojure.lang.Var/getThreadBindingFrame)]
+    (fn
+      ([]
+         (clojure.lang.Var/resetThreadBindingFrame frame)
+         (f))
+      ([x]
+         (clojure.lang.Var/resetThreadBindingFrame frame)
+         (f x))
+      ([x y]
+         (clojure.lang.Var/resetThreadBindingFrame frame)
+         (f x y))
+      ([x y z]
+         (clojure.lang.Var/resetThreadBindingFrame frame)
+         (f x y z))
+      ([x y z & args]
+         (clojure.lang.Var/resetThreadBindingFrame frame)
+         (apply f x y z args)))))
+
+(defn ^:static future-call
+  "Takes a function of no args and yields a future object that will
+  invoke the function in another thread, and will cache the result and
+  return it on all subsequent calls to deref/@. If the computation has
+  not yet finished, calls to deref/@ will block, unless the variant
+  of deref with timeout is used."
+  [executor f]
+  (let [f (binding-conveyor-fn f)
+        fut (execute executor f)]
+    (reify
+      clojure.lang.IDeref
+      (deref [_] (.get fut))
+      clojure.lang.IBlockingDeref
+      (deref
+        [_ timeout-ms timeout-val]
+        (try (.get fut timeout-ms java.util.concurrent.TimeUnit/MILLISECONDS)
+             (catch java.util.concurrent.TimeoutException e
+               timeout-val)))
+      clojure.lang.IPending
+      (isRealized [_] (.isDone fut))
+      Future
+      (get [_] (.get fut))
+      (get [_ timeout unit] (.get fut timeout unit))
+      (isCancelled [_] (.isCancelled fut))
+      (isDone [_] (.isDone fut))
+      (cancel [_ interrupt?] (.cancel fut interrupt?)))))
+
+(defmacro future
+  "Takes a body of expressions and yields a future object that will
+  invoke the body in another thread, and will cache the result and
+  return it on all subsequent calls to deref/@. If the computation has
+  not yet finished, calls to deref/@ will block, unless the variant of
+  deref with timeout is used.."
+  [executor & body] `(future-call ~executor (^{:once true} fn* [] ~@body)))
