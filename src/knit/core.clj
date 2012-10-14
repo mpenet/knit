@@ -24,11 +24,10 @@
 (defn thread-factory
   "Returns a new ThreadFactory instance"
   [& {:keys [daemon thread-group]
-      :or {daemon true
-           thread-group (.getThreadGroup (Thread/currentThread))}}]
+      :or {daemon true}}]
   (reify ThreadFactory
     (newThread [_ f]
-      (doto (Thread.  ^Runnable f)
+      (doto (Thread. ^ThreadGroup thread-group ^Runnable f)
         (.setDaemon (boolean daemon))))))
 
 (defn execute
