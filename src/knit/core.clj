@@ -63,18 +63,18 @@ corresponding Java instances"
                         unit :ms}}]
   (case type
     :with-fixed-delay
-    (.scheduleWithFixedDelay ^ScheduledThreadPoolExecutor x
+    (.scheduleWithFixedDelay ^ScheduledThreadPoolExecutor executor
                              ^Runnable f
                              ^long initial-delay
                              ^long delay
                              (time-units unit))
     :at-fixed-rate
-    (.scheduleAtFixedRate ^ScheduledThreadPoolExecutor x
+    (.scheduleAtFixedRate ^ScheduledThreadPoolExecutor executor
                           ^Runnable f
                           ^long initial-delay
                           ^long delay
                           (time-units unit))
-    :once (.schedule ^ScheduledThreadPoolExecutor x
+    :once (.schedule ^ScheduledThreadPoolExecutor executor
                      ^Runnable f
                      ^long delay
                      ^TimeUnit (time-units unit))))
