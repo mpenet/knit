@@ -51,7 +51,7 @@ With all options:
           :unit :mins)
 ```
 
-Time units are `:ns`, `:us`, `:ms`, `:s`, `:m`, `:h`, `:d`.
+Time units are `:ns`, `:us`, `:ms`, `:secs`, `:mins`, `:hours`, `:days`.
 
 
 ## License

@@ -7,10 +7,10 @@
   {:ns TimeUnit/NANOSECONDS
    :us TimeUnit/MICROSECONDS
    :ms TimeUnit/MILLISECONDS
-   :s TimeUnit/SECONDS
-   :m TimeUnit/MINUTES
-   :h TimeUnit/HOURS
-   :d TimeUnit/DAYS})
+   :secs TimeUnit/SECONDS
+   :mins TimeUnit/MINUTES
+   :hours TimeUnit/HOURS
+   :days TimeUnit/DAYS})
 
 (defn thread-group
   "Returns a new ThreadGroup instance to be used in thread-factory"
