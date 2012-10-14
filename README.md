@@ -1,6 +1,7 @@
 # knit
 
-Thin wrapper around Java Executors/Threads
+Thin wrapper around Java Executors/Threads and with configurable
+`future` and `future-call`.
 
 ## Usage
 
@@ -33,7 +34,17 @@ Submit a task to executor
 ```
 With all options
 ```clojure
-(def tf (thread-factory :thread-group a-thread-group :deamon false))
+(def a-thread-group (thread-group "knit-group"))
+(def tf (thread-factory :thread-group a-thread-group
+                        :deamon false))
+```
+
+### ThreadGroup
+Identical to the Java version
+
+```clojure
+(thread-group "name")
+(thread-group parent-group "name")
 ```
 
 ### ScheduledFuture
