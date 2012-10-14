@@ -110,11 +110,11 @@ corresponding Java instances"
          (apply f x y z args)))))
 
 (defn ^:static future-call
-  "Takes a function of no args and yields a future object that will
-  invoke the function in another thread, and will cache the result and
-  return it on all subsequent calls to deref/@. If the computation has
-  not yet finished, calls to deref/@ will block, unless the variant
-  of deref with timeout is used."
+  "Takes an executor instance and a function of no args and yields a
+   future object that will invoke the function in another thread, and
+   will cache the result and return it on all subsequent calls to
+   deref/@. If the computation has not yet finished, calls to deref/@
+   will block, unless the variant of deref with timeout is used."
   [executor f]
   (let [f (binding-conveyor-fn f)
         fut (execute executor f)]
@@ -137,9 +137,10 @@ corresponding Java instances"
       (cancel [_ interrupt?] (.cancel fut interrupt?)))))
 
 (defmacro future
-  "Takes a body of expressions and yields a future object that will
-  invoke the body in another thread, and will cache the result and
-  return it on all subsequent calls to deref/@. If the computation has
-  not yet finished, calls to deref/@ will block, unless the variant of
-  deref with timeout is used.."
-  [executor & body] `(future-call ~executor (^{:once true} fn* [] ~@body)))
+  "Takes an executor instance and a body of expressions and yields a
+   future object that will invoke the body in another thread, and will
+   cache the result and return it on all subsequent calls to deref/@. If
+   the computation has not yet finished, calls to deref/@ will block,
+   unless the variant of deref with timeout is used.."
+  [executor & body]
+  `(future-call ~executor (^{:once true} fn* [] ~@body)))
