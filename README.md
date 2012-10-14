@@ -1,6 +1,6 @@
 # knit
 
-Thin wrapper around Java Executors/Threads and with configurable
+Thin wrapper around Java Executors/Threads including configurable
 `future` and `future-call`.
 
 ## Usage
