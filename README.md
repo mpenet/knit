@@ -60,8 +60,9 @@ With all options:
 ```clojure
 (schedule :at-fixed-rate 2 #(println "hello world")
           :initial-delay 1
-          :num-threads 4
-          :thread-factory a-thread-factory
+          :executor (executor :scheduled
+                              :num-threads 3
+                              :thread-factory a-thread-factory)
           :unit :mins)
 ```
 

@@ -32,7 +32,7 @@
         (.setDaemon (boolean daemon))))))
 
 (defn execute
-  ""
+  "Submits the fn to specified executor, returns a Future"
   ^Future
   [^ExecutorService executor ^Callable f]
   (.submit executor f))
@@ -57,33 +57,27 @@ corresponding Java instances"
 `delay`'s default unit is milliseconds
 `f` task (function) to be run"
   ^ScheduledFuture
-  [type delay f & {:keys [initial-delay num-threads thread-factory unit]
-                   :or {initial-delay 0
-                        num-threads (int 1)
-                        thread-factory (Executors/defaultThreadFactory)
+  [type delay f & {:keys [executor initial-delay unit]
+                   :or {executor (knit.core/executor :scheduled)
+                        initial-delay 0
                         unit :ms}}]
-  (let [x ^ScheduledThreadPoolExecutor (executor :scheduled
-                                                 :thread-factory thread-factory
-                                                 :num-threads (int num-threads))]
-    (case type
-      :with-fixed-delay
-      (.scheduleWithFixedDelay x
-                               ^Runnable f
-                               ^long initial-delay
-                               ^long delay
-                               (time-units unit))
-
-      :at-fixed-rate
-      (.scheduleAtFixedRate x
-                            ^Runnable f
-                            ^long initial-delay
-                            ^long delay
-                            (time-units unit))
-
-      :once (.schedule x
-                       ^Runnable f
-                       ^long delay
-                       ^TimeUnit (time-units unit)))))
+  (case type
+    :with-fixed-delay
+    (.scheduleWithFixedDelay ^ScheduledThreadPoolExecutor x
+                             ^Runnable f
+                             ^long initial-delay
+                             ^long delay
+                             (time-units unit))
+    :at-fixed-rate
+    (.scheduleAtFixedRate ^ScheduledThreadPoolExecutor x
+                          ^Runnable f
+                          ^long initial-delay
+                          ^long delay
+                          (time-units unit))
+    :once (.schedule ^ScheduledThreadPoolExecutor x
+                     ^Runnable f
+                     ^long delay
+                     ^TimeUnit (time-units unit))))
 
 
 ;; Almost identical copies of clojure.core future, only difference is
