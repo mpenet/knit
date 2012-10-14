@@ -57,8 +57,8 @@ corresponding Java instances"
 `delay`'s default unit is milliseconds
 `f` task (function) to be run"
   ^ScheduledFuture
-  [type delay f & {:keys [initital-delay num-threads thread-factory unit]
-                   :or {initital-delay 0
+  [type delay f & {:keys [initial-delay num-threads thread-factory unit]
+                   :or {initial-delay 0
                         num-threads (int 1)
                         thread-factory (Executors/defaultThreadFactory)
                         unit :ms}}]
@@ -69,14 +69,14 @@ corresponding Java instances"
       :with-fixed-delay
       (.scheduleWithFixedDelay x
                                ^Runnable f
-                               ^long initital-delay
+                               ^long initial-delay
                                ^long delay
                                (time-units unit))
 
       :at-fixed-rate
       (.scheduleAtFixedRate x
                             ^Runnable f
-                            ^long initital-delay
+                            ^long initial-delay
                             ^long delay
                             (time-units unit))
 
