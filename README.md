@@ -36,7 +36,7 @@ With all options
 ```clojure
 (def a-thread-group (thread-group "knit-group"))
 (def tf (thread-factory :thread-group a-thread-group
-                        :deamon false))
+                        :daemon false))
 ```
 
 ### ThreadGroup
