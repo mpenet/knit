@@ -71,9 +71,6 @@ Time units are `:ns` `:us` `:ms` `:secs` `:mins` `:hours` `:days`.
 ### Clojure like future with configurable execution context
 
 ```clojure
-
-(def x (executor :fixed :num-threads 3))
-
 (knit.core/future x (System/currentTimeMillis))
 (knit.core/future-call x #(System/currentTimeMillis))
 ```
