@@ -1,6 +1,6 @@
 # knit
 
-Thin wrapper around Java Executors/Threads"
+Thin wrapper around Java Executors/Threads
 
 ## Usage
 
@@ -19,7 +19,8 @@ With all options
 (def x (executors :fixed :num-threads 3 :thread-factory a-thread-factory))
 ```
 
-```Submit a task to executor
+Submit a task to executor
+```clojure
 (execute x #(println "Hello World"))
 ```
 
@@ -51,7 +52,7 @@ With all options:
           :unit :mins)
 ```
 
-Time units are `:ns`, `:us`, `:ms`, `:secs`, `:mins`, `:hours`, `:days`.
+Time units are `:ns` `:us` `:ms` `:secs` `:mins` `:hours` `:days`.
 
 
 ## License
