@@ -56,7 +56,7 @@ corresponding Java instances"
 `delay`'s default unit is milliseconds
 `f` task (function) to be run"
   ^ScheduledFuture
-  [f type delay & {:keys [executor initial-delay unit]
+  [type delay f & {:keys [executor initial-delay unit]
                    :or {executor (knit.core/executor :scheduled)
                         initial-delay 0
                         unit :ms}}]
