@@ -3,6 +3,12 @@
 Thin wrapper around Java Executors/Threads, including configurable
 `future` and `future-call`.
 
+## Instalation
+
+```clojure
+[cc.qbits/knit "0.1.1"]
+```
+
 ## Usage
 
 ```Clojure
