@@ -50,7 +50,7 @@ Identical to the Java version
 ### ScheduledFuture
 
 ```clojure
-(schedule :at-fixed-rate 200 #(println "hello world"))
+(schedule #(println "hello world") :at-fixed-rate 200)
 
 ```
 Supports `:at-fixed-rate` `:with-fixed-delay` `:once`, matching the
@@ -58,7 +58,8 @@ corresponding Java methods.
 
 With all options:
 ```clojure
-(schedule :at-fixed-rate 2 #(println "hello world")
+(schedule #(println "hello world")
+          :at-fixed-rate 2
           :initial-delay 1
           :executor (executor :scheduled
                               :num-threads 3

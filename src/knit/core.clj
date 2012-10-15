@@ -56,7 +56,7 @@ corresponding Java instances"
 `delay`'s default unit is milliseconds
 `f` task (function) to be run"
   ^ScheduledFuture
-  [type delay f & {:keys [executor initial-delay unit]
+  [f type delay & {:keys [executor initial-delay unit]
                    :or {executor (knit.core/executor :scheduled)
                         initial-delay 0
                         unit :ms}}]
@@ -137,3 +137,6 @@ corresponding Java instances"
    unless the variant of deref with timeout is used.."
   [executor & body]
   `(future-call ~executor (^{:once true} fn* [] ~@body)))
+
+
+(defonce scheduled-executor (executor :scheduled :num-threads 5))
