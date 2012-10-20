@@ -137,6 +137,3 @@ corresponding Java instances"
    unless the variant of deref with timeout is used.."
   [executor & body]
   `(future-call ~executor (^{:once true} fn* [] ~@body)))
-
-
-(defonce scheduled-executor (executor :scheduled :num-threads 5))
