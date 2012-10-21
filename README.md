@@ -72,7 +72,7 @@ With all options:
           :unit :mins)
 ```
 
-Time units are `:ns` `:us` `:ms` `:secs` `:mins` `:hours` `:days`.
+Time units are `:ns` `:us` `:ms` `:secs` `:mins` `:hours` `:days`
 
 
 ### Clojure like future with configurable execution context
