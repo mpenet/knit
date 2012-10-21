@@ -1,4 +1,4 @@
-# knit
+# knit [![Build Status](https://secure.travis-ci.org/mpenet/knit.png?branch=master)](http://travis-ci.org/mpenet/knit)
 
 Thin wrapper around Java Executors/Threads, including configurable
 `future` and `future-call`.
