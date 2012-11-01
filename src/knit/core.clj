@@ -108,9 +108,12 @@ corresponding Java instances"
    will cache the result and return it on all subsequent calls to
    deref/@. If the computation has not yet finished, calls to deref/@
    will block, unless the variant of deref with timeout is used."
-  [executor f]
-  (let [f (binding-conveyor-fn f)
-        fut (execute executor f)]
+  [executor f & {:keys [preserve-bindings?]
+                 :or {preserve-bindings? true}}]
+  (let [fut (execute executor
+                     (if preserve-bindings?
+                       (binding-conveyor-fn f)
+                       f))]
     (reify
       clojure.lang.IDeref
       (deref [_] (.get fut))
