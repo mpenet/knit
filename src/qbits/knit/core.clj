@@ -1,4 +1,4 @@
-(ns knit.core
+(ns qbits.knit.core
   (:refer-clojure :exclude [future future-call])
   (:import [java.util.concurrent Executors ExecutorService Future
             ScheduledExecutorService ScheduledFuture ScheduledThreadPoolExecutor
@@ -57,7 +57,7 @@ corresponding Java instances"
 `f` task (function) to be run"
   ^ScheduledFuture
   [type delay f & {:keys [executor initial-delay unit]
-                   :or {executor (knit.core/executor :scheduled)
+                   :or {executor (qbits.knit.core/executor :scheduled)
                         initial-delay 0
                         unit :ms}}]
   (case type

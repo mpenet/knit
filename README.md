@@ -6,13 +6,13 @@ Thin wrapper around Java Executors/Threads, including configurable
 ## Installation
 
 ```clojure
-[cc.qbits/knit "0.1.2"]
+[cc.qbits/knit "0.2.0"]
 ```
 
 ## Usage
 
 ```Clojure
-(use 'knit.core)
+(use 'qbits.knit.core)
 ```
 
 ### Executors
@@ -78,8 +78,8 @@ Time units are `:ns` `:us` `:ms` `:secs` `:mins` `:hours` `:days`
 ### Clojure like future with configurable execution context
 
 ```clojure
-(knit.core/future x (System/currentTimeMillis))
-(knit.core/future-call x #(System/currentTimeMillis))
+(qbits.knit.core/future x (System/currentTimeMillis))
+(qbits.knit.core/future-call x #(System/currentTimeMillis))
 ```
 
 ## License
