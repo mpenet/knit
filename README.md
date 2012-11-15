@@ -6,7 +6,7 @@ Thin wrapper around Java Executors/Threads, including configurable
 ## Installation
 
 ```clojure
-[cc.qbits/knit "0.2.0"]
+[cc.qbits/knit "0.2.1"]
 ```
 
 ## Usage
