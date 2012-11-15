@@ -1,4 +1,4 @@
-(defproject cc.qbits/knit "0.2.0"
+(defproject cc.qbits/knit "0.2.1"
   :description "Thin wrapper around Java Executors/Threads"
   :url "https://github.com/mpenet/knit"
   :license {:name "Eclipse Public License"

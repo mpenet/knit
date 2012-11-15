@@ -1,7 +1,7 @@
 (ns qbits.knit.core-test
   (:refer-clojure :exclude [future future-call])
   (:use clojure.test
-        qbits.knit.core)
+        qbits.knit)
   (:import [java.util.concurrent ExecutorService ThreadPoolExecutor
             Executors$FinalizableDelegatedExecutorService
             ScheduledThreadPoolExecutor]))
