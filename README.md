@@ -21,11 +21,11 @@ Executor can be `:fixed` `:cached` `:single` `:scheduled`, matching the
 corresponding Java instances.
 
 ```Clojure
-(def x (executors :fixed))
+(def x (executor :fixed))
 ```
 With all options
 ```clojure
-(def x (executors :fixed :num-threads 3 :thread-factory a-thread-factory))
+(def x (executor :fixed :num-threads 3 :thread-factory a-thread-factory))
 ```
 
 Submit a task to executor
