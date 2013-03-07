@@ -60,7 +60,7 @@ Identical to the Java version
 
 ```
 Supports `:at-fixed-rate` `:with-fixed-delay` `:once`, matching the
-corresponding Java methods.
+corresponding [Java methods](http://docs.oracle.com/javase/6/docs/api/java/util/concurrent/ScheduledExecutorService.html).
 
 With all options:
 ```clojure
