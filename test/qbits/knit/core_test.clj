@@ -30,6 +30,3 @@
     (is (= 1 (:once @r)))
     (is (= 5 (:with-fixed-delay @r)))
     (is (= 5 (:at-fixed-rate @r)))))
-
-
-(t/check-ns)
