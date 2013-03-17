@@ -15,24 +15,17 @@
     ThreadFactory
     TimeUnit]))
 
-(t/ann time-units '{:ns TimeUnit
-                    :us TimeUnit
-                    :ms TimeUnit
-                    :secs TimeUnit
-                    :mins TimeUnit
-                    :hours TimeUnit
-                    :days TimeUnit})
-(def time-units
-  {:ns    TimeUnit/NANOSECONDS
-   :us    TimeUnit/MICROSECONDS
-   :ms    TimeUnit/MILLISECONDS
-   :secs  TimeUnit/SECONDS
-   :mins  TimeUnit/MINUTES
-   :hours TimeUnit/HOURS
-   :days  TimeUnit/DAYS})
-
-;; (t/cf (get time-units :ns))
-;; (t/check-ns)
+;; we annotate it as a function, allowing us to reuse TimeUnitValue
+(t/ann time-units [TimeUnitValue -> TimeUnit])
+(t/tc-ignore
+ (def time-units
+   {:ns    TimeUnit/NANOSECONDS
+    :us    TimeUnit/MICROSECONDS
+    :ms    TimeUnit/MILLISECONDS
+    :secs  TimeUnit/SECONDS
+    :mins  TimeUnit/MINUTES
+    :hours TimeUnit/HOURS
+    :days  TimeUnit/DAYS}))
 
 (t/ann thread-group (Fn [ThreadGroup String -> ThreadGroup]
                         [String -> ThreadGroup]))
@@ -84,7 +77,6 @@ corresponding Java instances"
 
 (t/ann schedule [ScheduledExecutorType Number Runnable Any *
                  -> ScheduledFuture])  ;; TODO: KW args
-
 (t/tc-ignore
  (defn schedule
    "Return a ScheduledFuture.
