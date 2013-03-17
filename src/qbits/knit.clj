@@ -4,7 +4,7 @@
    [clojure.core.typed :as t]
    [qbits.knit.types :refer :all])
   (:import
-   [clojure.lang APersistentMap]
+   [clojure.lang APersistentMap Named]
    [java.util.concurrent
     Executors
     ExecutorService
@@ -15,13 +15,13 @@
     ThreadFactory
     TimeUnit]))
 
-(t/ann time-units '{:ns TimeUnit
-                    :us TimeUnit
-                    :ms TimeUnit
-                    :secs TimeUnit
-                    :mins TimeUnit
-                    :hours TimeUnit
-                    :days TimeUnit})
+(t/ann time-units '{:ns 'TimeUnit/NANOSECONDS
+                    :us 'TimeUnit/MICROSECONDS
+                    :ms 'TimeUnit/MILLISECONDS
+                    :secs 'TimeUnit/SECONDS
+                    :mins 'TimeUnit/MINUTES
+                    :hours 'TimeUnit/HOURS
+                    :days 'TimeUnit/DAYS})
 (def time-units
   {:ns    TimeUnit/NANOSECONDS
    :us    TimeUnit/MICROSECONDS
@@ -171,4 +171,4 @@ corresponding Java instances"
    [executor & body]
    `(future-call ~executor (^{:once true} fn* [] ~@body))))
 
-;; (t/check-ns)
+(t/check-ns)
