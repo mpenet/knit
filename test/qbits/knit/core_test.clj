@@ -1,5 +1,6 @@
 (ns qbits.knit.core-test
   (:refer-clojure :exclude [future future-call])
+  (:require [clojure.core.typed :as t])
   (:use clojure.test
         qbits.knit)
   (:import [java.util.concurrent ExecutorService ThreadPoolExecutor
@@ -29,3 +30,6 @@
     (is (= 1 (:once @r)))
     (is (= 5 (:with-fixed-delay @r)))
     (is (= 5 (:at-fixed-rate @r)))))
+
+
+(t/check-ns)

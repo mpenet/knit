@@ -1,18 +1,31 @@
 (ns qbits.knit
   (:refer-clojure :exclude [future future-call])
-  (:import [java.util.concurrent Executors ExecutorService Future
-            ScheduledExecutorService ScheduledFuture ScheduledThreadPoolExecutor
-            ThreadFactory TimeUnit]))
+  (:require
+   [clojure.core.typed :as t]
+   [qbits.knit.types :refer :all])
+  (:import
+   [java.util.concurrent
+    Executors
+    ExecutorService
+    Future
+    ScheduledExecutorService
+    ScheduledFuture
+    ScheduledThreadPoolExecutor
+    ThreadFactory
+    TimeUnit]))
 
+(t/ann time-units (HMap {TimeUnitValue TimeUnit}))
 (def time-units
-  {:ns TimeUnit/NANOSECONDS
-   :us TimeUnit/MICROSECONDS
-   :ms TimeUnit/MILLISECONDS
-   :secs TimeUnit/SECONDS
-   :mins TimeUnit/MINUTES
+  {:ns    TimeUnit/NANOSECONDS
+   :us    TimeUnit/MICROSECONDS
+   :ms    TimeUnit/MILLISECONDS
+   :secs  TimeUnit/SECONDS
+   :mins  TimeUnit/MINUTES
    :hours TimeUnit/HOURS
-   :days TimeUnit/DAYS})
+   :days  TimeUnit/DAYS})
 
+(t/ann thread-group (Fn [ThreadGroup String -> ThreadGroup]
+                        [String -> ThreadGroup]))
 (defn thread-group
   "Returns a new ThreadGroup instance to be used in thread-factory"
   ^ThreadGroup
@@ -21,6 +34,7 @@
   ([^String name]
      (ThreadGroup. name)))
 
+(t/ann thread-factory [Any * -> ThreadFactory]) ;; TODO: KW args
 (defn thread-factory
   "Returns a new ThreadFactory instance"
   [& {:keys [daemon thread-group]
@@ -30,12 +44,14 @@
       (doto (Thread. ^ThreadGroup thread-group ^Runnable f)
         (.setDaemon (boolean daemon))))))
 
+(t/ann execute [ExecutorService Callable -> Future])
 (defn execute
   "Submits the fn to specified executor, returns a Future"
   ^Future
   [^ExecutorService executor ^Callable f]
   (.submit executor f))
 
+(t/ann executor [ExecutorType Any * -> ExecutorService])  ;; TODO: KW args
 (defn executor
   "Returns ExecutorService.
 `type` can be :single, :cached, :fixed or :scheduled, this matches the
@@ -45,11 +61,13 @@ corresponding Java instances"
            :or {num-threads (int 1)
                 thread-factory (Executors/defaultThreadFactory)}}]
   (case type
-    :single (Executors/newSingleThreadExecutor thread-factory)
-    :cached  (Executors/newCachedThreadPool thread-factory)
-    :fixed  (Executors/newFixedThreadPool (int num-threads) thread-factory)
+    :single    (Executors/newSingleThreadExecutor thread-factory)
+    :cached    (Executors/newCachedThreadPool thread-factory)
+    :fixed     (Executors/newFixedThreadPool (int num-threads) thread-factory)
     :scheduled (Executors/newScheduledThreadPool (int num-threads) thread-factory)))
 
+(t/ann schedule [ScheduledExecutorType Number Runnable Any *
+                 -> ScheduledFuture])  ;; TODO: KW args
 (defn schedule
   "Return a ScheduledFuture.
 `type` can be :with-fixed-delay, :at-fixed-rate, :once
@@ -64,24 +82,24 @@ corresponding Java instances"
     :with-fixed-delay
     (.scheduleWithFixedDelay ^ScheduledThreadPoolExecutor executor
                              ^Runnable f
-                             ^long initial-delay
-                             ^long delay
+                             (long initial-delay)
+                             (long delay)
                              (time-units unit))
     :at-fixed-rate
     (.scheduleAtFixedRate ^ScheduledThreadPoolExecutor executor
                           ^Runnable f
-                          ^long initial-delay
-                          ^long delay
+                          (long initial-delay)
+                          (long delay)
                           (time-units unit))
     :once (.schedule ^ScheduledThreadPoolExecutor executor
                      ^Runnable f
-                     ^long delay
+                     (long delay)
                      ^TimeUnit (time-units unit))))
 
 
 ;; Almost identical copies of clojure.core future, only difference is
 ;; the executor parameter
-
+(t/tc-ignore
 (defn ^:private binding-conveyor-fn
   [f]
   (let [frame (clojure.lang.Var/getThreadBindingFrame)]
@@ -130,7 +148,7 @@ corresponding Java instances"
       (get [_ timeout unit] (.get fut timeout unit))
       (isCancelled [_] (.isCancelled fut))
       (isDone [_] (.isDone fut))
-      (cancel [_ interrupt?] (.cancel fut interrupt?)))))
+      (cancel [_ interrupt?] (.cancel fut interrupt?))))))
 
 (defmacro future
   "Takes an executor instance and a body of expressions and yields a
@@ -140,3 +158,5 @@ corresponding Java instances"
    unless the variant of deref with timeout is used.."
   [executor & body]
   `(future-call ~executor (^{:once true} fn* [] ~@body)))
+
+;; (t/check-ns)
