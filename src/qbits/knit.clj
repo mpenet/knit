@@ -41,6 +41,15 @@
   ([^String name]
      (ThreadGroup. name)))
 
+(t/non-nil-return java.util.concurrent.ExecutorService/submit :all)
+(t/ann execute [ExecutorService Callable -> Future])
+(defn execute
+   "Submits the fn to specified executor, returns a Future"
+   ^Future
+   [^ExecutorService executor ^Callable f]
+   (.submit executor f))
+
+
 (t/tc-ignore
 
  (t/ann thread-factory [Any * -> ThreadFactory]) ;; TODO: KW args
@@ -53,12 +62,6 @@
        (doto (Thread. ^ThreadGroup thread-group ^Runnable f)
          (.setDaemon (boolean daemon))))))
 
- (t/ann execute [ExecutorService Callable -> Future])
- (defn execute
-   "Submits the fn to specified executor, returns a Future"
-   ^Future
-   [^ExecutorService executor ^Callable f]
-   (.submit executor f))
 
  (t/ann executor [ExecutorType Any * -> ExecutorService])  ;; TODO: KW args
  (defn executor
@@ -167,6 +170,5 @@ corresponding Java instances"
    unless the variant of deref with timeout is used.."
    [executor & body]
    `(future-call ~executor (^{:once true} fn* [] ~@body))))
-
 
 ;; (t/check-ns)
