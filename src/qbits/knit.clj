@@ -47,15 +47,16 @@
 (t/non-nil-return java.util.concurrent.ExecutorService/submit :all)
 (t/ann execute [ExecutorService Callable -> Future])
 (defn execute
-   "Submits the fn to specified executor, returns a Future"
-   ^Future
-   [^ExecutorService executor ^Callable f]
-   (.submit executor f))
+  "Submits the fn to specified executor, returns a Future"
+  ^Future
+  [^ExecutorService executor ^Callable f]
+  (.submit executor f))
 
 
+
+
+(t/ann thread-factory [Any * -> ThreadFactory]) ;; TODO: KW args
 (t/tc-ignore
-
- (t/ann thread-factory [Any * -> ThreadFactory]) ;; TODO: KW args
  (defn thread-factory
    "Returns a new ThreadFactory instance"
    [& {:keys [daemon thread-group]
@@ -63,10 +64,10 @@
    (reify ThreadFactory
      (newThread [_ f]
        (doto (Thread. ^ThreadGroup thread-group ^Runnable f)
-         (.setDaemon (boolean daemon))))))
+         (.setDaemon (boolean daemon)))))))
 
-
- (t/ann executor [ExecutorType Any * -> ExecutorService])  ;; TODO: KW args
+(t/ann executor [ExecutorType Any * -> ExecutorService])  ;; TODO: KW args
+(t/tc-ignore
  (defn executor
    "Returns ExecutorService.
 `type` can be :single, :cached, :fixed or :scheduled, this matches the
@@ -79,10 +80,12 @@ corresponding Java instances"
      :single    (Executors/newSingleThreadExecutor thread-factory)
      :cached    (Executors/newCachedThreadPool thread-factory)
      :fixed     (Executors/newFixedThreadPool (int num-threads) thread-factory)
-     :scheduled (Executors/newScheduledThreadPool (int num-threads) thread-factory)))
+     :scheduled (Executors/newScheduledThreadPool (int num-threads) thread-factory))))
 
- (t/ann schedule [ScheduledExecutorType Number Runnable Any *
-                  -> ScheduledFuture])  ;; TODO: KW args
+(t/ann schedule [ScheduledExecutorType Number Runnable Any *
+                 -> ScheduledFuture])  ;; TODO: KW args
+
+(t/tc-ignore
  (defn schedule
    "Return a ScheduledFuture.
 `type` can be :with-fixed-delay, :at-fixed-rate, :once
@@ -109,12 +112,13 @@ corresponding Java instances"
      :once (.schedule ^ScheduledThreadPoolExecutor executor
                       ^Runnable f
                       (long delay)
-                      ^TimeUnit (time-units unit))))
+                      ^TimeUnit (time-units unit)))))
 
 
- ;; Almost identical copies of clojure.core future, only difference is
- ;; the executor parameter
+;; Almost identical copies of clojure.core future, only difference is
+;; the executor parameter
 
+(t/tc-ignore
  (defn ^:private binding-conveyor-fn
    [f]
    (let [frame (clojure.lang.Var/getThreadBindingFrame)]
