@@ -4,6 +4,7 @@
    [clojure.core.typed :as t]
    [qbits.knit.types :refer :all])
   (:import
+   [clojure.lang APersistentMap]
    [java.util.concurrent
     Executors
     ExecutorService
@@ -14,7 +15,7 @@
     ThreadFactory
     TimeUnit]))
 
-(t/ann time-units (HMap {TimeUnitValue TimeUnit}))
+(t/ann time-units (APersistentMap TimeUnitValue java.util.concurrent.TimeUnit))
 (def time-units
   {:ns    TimeUnit/NANOSECONDS
    :us    TimeUnit/MICROSECONDS
@@ -23,6 +24,13 @@
    :mins  TimeUnit/MINUTES
    :hours TimeUnit/HOURS
    :days  TimeUnit/DAYS})
+
+;; (t/ann foo (APersistentMap clojure.lang.Named clojure.lang.Named))
+;; (def foo {:a :b})
+
+;; (t/cf (get foo :a))
+;; (prn  (type time-units))
+
 
 (t/ann thread-group (Fn [ThreadGroup String -> ThreadGroup]
                         [String -> ThreadGroup]))
@@ -158,5 +166,3 @@ corresponding Java instances"
    unless the variant of deref with timeout is used.."
   [executor & body]
   `(future-call ~executor (^{:once true} fn* [] ~@body)))
-
-;; (t/check-ns)
