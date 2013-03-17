@@ -15,13 +15,13 @@
     ThreadFactory
     TimeUnit]))
 
-(t/ann time-units '{:ns 'TimeUnit/NANOSECONDS
-                    :us 'TimeUnit/MICROSECONDS
-                    :ms 'TimeUnit/MILLISECONDS
-                    :secs 'TimeUnit/SECONDS
-                    :mins 'TimeUnit/MINUTES
-                    :hours 'TimeUnit/HOURS
-                    :days 'TimeUnit/DAYS})
+(t/ann time-units '{:ns TimeUnit
+                    :us TimeUnit
+                    :ms TimeUnit
+                    :secs TimeUnit
+                    :mins TimeUnit
+                    :hours TimeUnit
+                    :days TimeUnit})
 (def time-units
   {:ns    TimeUnit/NANOSECONDS
    :us    TimeUnit/MICROSECONDS
@@ -30,6 +30,9 @@
    :mins  TimeUnit/MINUTES
    :hours TimeUnit/HOURS
    :days  TimeUnit/DAYS})
+
+;; (t/cf (get time-units :ns))
+;; (t/check-ns)
 
 (t/ann thread-group (Fn [ThreadGroup String -> ThreadGroup]
                         [String -> ThreadGroup]))
