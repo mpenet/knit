@@ -6,7 +6,7 @@ Thin wrapper around Java Executors/Threads, including configurable
 ## Installation
 
 ```clojure
-[cc.qbits/knit "0.2.1"]
+[cc.qbits/knit "0.3.0"]
 ```
 
 ## Usage
@@ -25,7 +25,7 @@ corresponding Java instances.
 ```
 With all options
 ```clojure
-(def x (executor :fixed :num-threads 3 :thread-factory a-thread-factory))
+(def x (executor :fixed {:num-threads 3 :thread-factory a-thread-factory}))
 ```
 
 Submit a task to executor
@@ -41,8 +41,8 @@ Submit a task to executor
 With all options
 ```clojure
 (def a-thread-group (thread-group "knit-group"))
-(def tf (thread-factory :thread-group a-thread-group
-                        :daemon false))
+(def tf (thread-factory {:thread-group a-thread-group
+                         :daemon false}))
 ```
 
 ### ThreadGroup
@@ -65,25 +65,29 @@ corresponding [Java methods](http://docs.oracle.com/javase/6/docs/api/java/util/
 With all options:
 ```clojure
 (schedule :at-fixed-rate 2 #(println "hello world")
-          :initial-delay 1
+          {:initial-delay 1
           :executor (executor :scheduled
                               :num-threads 3
                               :thread-factory a-thread-factory)
-          :unit :mins)
+          :unit :minutes})
 ```
 
-Time units are `:ns` `:us` `:ms` `:secs` `:mins` `:hours` `:days`
+Time units are `:days` `:hours` `:minutes` `:seconds` `:milliseconds` `:microseconds` `:nanoseconds`
 
 
-### Clojure like future with configurable execution context
+### Clojure like future and core.async/thread* with configurable execution context
 
 ```clojure
-(qbits.knit/future x (System/currentTimeMillis))
-(qbits.knit/future-call x #(System/currentTimeMillis))
+(qbits.knit/future {:executor x} (System/currentTimeMillis))
+(qbits.knit/future-call #(System/currentTimeMillis) {:executor x})
+
+;; core.async/thread
+(qbits.knit/thread {:executor x} (System/currentTimeMillis))
+(qbits.knit/future-call #(System/currentTimeMillis) {:executor x})
 ```
 
 ## License
 
-Copyright © 2012 Max Penet
+Copyright © 2015 Max Penet
 
 Distributed under the Eclipse Public License, the same as Clojure.
