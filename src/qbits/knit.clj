@@ -11,8 +11,6 @@
 
 (def time-units (qc/enum->map TimeUnit))
 
-(prn (keys time-units))
-
 (defn thread-group
   "Returns a new ThreadGroup instance to be used in thread-factory"
   ^ThreadGroup

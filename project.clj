@@ -8,6 +8,9 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]]
   :profiles {:1.4  {:dependencies [[org.clojure/clojure "1.4.0"]]}
              :1.5  {:dependencies [[org.clojure/clojure "1.5.0-master-SNAPSHOT"]]}
-             :dev  {:dependencies [[codox "0.6.1"]]}
+             :dev  {:dependencies [[codox "0.8.10"]]}
              :test {:dependencies []}}
+  :codox {:src-dir-uri "https://github.com/mpenet/knit/blob/master/"
+          :src-linenum-anchor-prefix "L"
+          :defaults {:doc/format :markdown}}
   :global-vars {*warn-on-reflection* true})
