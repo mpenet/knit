@@ -83,7 +83,7 @@ Time units are `:days` `:hours` `:minutes` `:seconds` `:milliseconds` `:microsec
 
 ;; core.async/thread
 (qbits.knit/thread {:executor x} (System/currentTimeMillis))
-(qbits.knit/future-call #(System/currentTimeMillis) {:executor x})
+(qbits.knit/thread-call #(System/currentTimeMillis) {:executor x})
 ```
 
 ## License
