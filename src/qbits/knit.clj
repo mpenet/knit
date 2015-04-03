@@ -57,26 +57,26 @@ corresponding Java instances"
   ^ScheduledFuture
   ([type delay f] (schedule type delay f nil))
   ([type delay f {:keys [executor initial-delay unit]
-                    :or {executor (qbits.knit/executor :scheduled)
-                         initial-delay 0
+                    :or {initial-delay 0
                          unit :milliseconds}}]
-   (case type
-     :with-fixed-delay
-     (.scheduleWithFixedDelay ^ScheduledThreadPoolExecutor executor
-                              ^Runnable f
-                              ^long initial-delay
-                              ^long delay
-                              (time-units unit))
-     :at-fixed-rate
-     (.scheduleAtFixedRate ^ScheduledThreadPoolExecutor executor
-                           ^Runnable f
-                           ^long initial-delay
-                           ^long delay
-                           (time-units unit))
-     :once (.schedule ^ScheduledThreadPoolExecutor executor
-                      ^Runnable f
-                      ^long delay
-                      ^TimeUnit (time-units unit)))))
+   (let [executor (or executor (qbits.knit/executor :scheduled))]
+     (case type
+       :with-fixed-delay
+       (.scheduleWithFixedDelay ^ScheduledThreadPoolExecutor executor
+                                ^Runnable f
+                                ^long initial-delay
+                                ^long delay
+                                (time-units unit))
+       :at-fixed-rate
+       (.scheduleAtFixedRate ^ScheduledThreadPoolExecutor executor
+                             ^Runnable f
+                             ^long initial-delay
+                             ^long delay
+                             (time-units unit))
+       :once (.schedule ^ScheduledThreadPoolExecutor executor
+                        ^Runnable f
+                        ^long delay
+                        ^TimeUnit (time-units unit))))))
 
 (def binding-conveyor-fn (var-get #'clojure.core/binding-conveyor-fn))
 (def deref-future (var-get #'clojure.core/deref-future))
