@@ -1,12 +1,13 @@
 # knit [![Build Status](https://secure.travis-ci.org/mpenet/knit.png?branch=master)](http://travis-ci.org/mpenet/knit)
 
-Thin wrapper around Java Executors/Threads, including configurable
-`future` and `future-call`.
+Thin wrapper around Java Executors/Threads, including executors aware
+versions of `future`, `clojure.core.async/thread`,
+`clojure.core.async/thread-call` and `future-call`.
 
 ## Installation
 
 ```clojure
-[cc.qbits/knit "0.3.0"]
+[cc.qbits/knit "0.3.1"]
 ```
 
 ## Usage
