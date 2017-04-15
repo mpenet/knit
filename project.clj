@@ -6,8 +6,6 @@
   :dependencies [[org.clojure/clojure "1.8.0-RC5"]
                  [cc.qbits/commons "0.4.5"]
                  [org.clojure/core.async "0.2.374"]]
-  :profiles {:dev  {:dependencies []}
-             :test {:dependencies []}}
   :codox {:src-dir-uri "https://github.com/mpenet/knit/blob/master/"
           :src-linenum-anchor-prefix "L"
           :defaults {:doc/format :markdown}}
