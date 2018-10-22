@@ -1,12 +1,9 @@
-(defproject cc.qbits/knit "0.3.1"
+(defproject cc.qbits/knit "0.3.2"
   :description "Thin wrapper around Java Executors/Threads"
   :url "https://github.com/mpenet/knit"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.8.0-RC5"]
-                 [cc.qbits/commons "0.4.5"]
-                 [org.clojure/core.async "0.2.374"]]
-  :codox {:src-dir-uri "https://github.com/mpenet/knit/blob/master/"
-          :src-linenum-anchor-prefix "L"
-          :defaults {:doc/format :markdown}}
+  :dependencies [[org.clojure/clojure "1.10.0-beta3"]
+                 [cc.qbits/commons "0.5.1"]
+                 [org.clojure/core.async "0.4.474"]]
   :global-vars {*warn-on-reflection* true})

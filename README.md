@@ -6,9 +6,7 @@ versions of `future`, `clojure.core.async/thread`,
 
 ## Installation
 
-```clojure
-[cc.qbits/knit "0.3.1"]
-```
+[![Clojars Project](https://img.shields.io/clojars/v/cc.qbits/knit.svg)](https://clojars.org/cc.qbits/knit)
 
 ## Usage
 
