@@ -15,14 +15,14 @@
   "Returns a new ThreadGroup instance to be used in thread-factory"
   ^ThreadGroup
   ([^ThreadGroup parent ^String name]
-     (ThreadGroup. parent name))
+   (ThreadGroup. parent name))
   ([^String name]
-     (ThreadGroup. name)))
+   (ThreadGroup. name)))
 
 (defn thread-factory
   "Returns a new ThreadFactory instance"
   [{:keys [daemon thread-group]
-      :or {daemon true}}]
+    :or {daemon true}}]
   (reify ThreadFactory
     (newThread [_ f]
       (doto (Thread. ^ThreadGroup thread-group ^Runnable f)
@@ -36,8 +36,8 @@
 
 (defn executor
   "Returns ExecutorService.
-`type` can be :single, :cached, :fixed or :scheduled, this matches the
-corresponding Java instances"
+  `type` can be :single, :cached, :fixed or :scheduled, this matches the
+  corresponding Java instances"
   ^ExecutorService
   ([type] (executor type nil))
   ([type {:keys [thread-factory num-threads]
@@ -51,14 +51,14 @@ corresponding Java instances"
 
 (defn schedule
   "Return a ScheduledFuture.
-`type` can be :with-fixed-delay, :at-fixed-rate, :once
-`delay`'s default unit is milliseconds
-`f` task (function) to be run"
+  `type` can be :with-fixed-delay, :at-fixed-rate, :once
+  `delay`'s default unit is milliseconds
+  `f` task (function) to be run"
   ^ScheduledFuture
   ([type delay f] (schedule type delay f nil))
   ([type delay f {:keys [executor initial-delay unit]
-                    :or {initial-delay 0
-                         unit :milliseconds}}]
+                  :or {initial-delay 0
+                       unit :milliseconds}}]
    (let [executor (or executor (qbits.knit/executor :scheduled))]
      (case type
        :with-fixed-delay
@@ -90,31 +90,30 @@ corresponding Java instances"
   of deref with timeout is used. See also - realized?."
   {:added "1.1"
    :static true}
-  ([f] (future-call f nil))
-  ([f {:as options
-       :keys [executor preserve-bindings?]
-       :or {preserve-bindings? true
-            executor clojure.lang.Agent/soloExecutor}}]
+  [f {:as options
+      :keys [executor preserve-bindings?]
+      :or {preserve-bindings? true
+           executor clojure.lang.Agent/soloExecutor}}]
 
-   (let [f (if preserve-bindings?
-             (binding-conveyor-fn f)
-             f)
-         fut (execute executor f)]
-     (reify
-       clojure.lang.IDeref
-       (deref [_] (deref-future fut))
-       clojure.lang.IBlockingDeref
-       (deref
-         [_ timeout-ms timeout-val]
-         (deref-future fut timeout-ms timeout-val))
-       clojure.lang.IPending
-       (isRealized [_] (.isDone fut))
-       java.util.concurrent.Future
-       (get [_] (.get fut))
-       (get [_ timeout unit] (.get fut timeout unit))
-       (isCancelled [_] (.isCancelled fut))
-       (isDone [_] (.isDone fut))
-       (cancel [_ interrupt?] (.cancel fut interrupt?))))))
+  (let [f (if preserve-bindings?
+            (binding-conveyor-fn f)
+            f)
+        fut (execute executor f)]
+    (reify
+      clojure.lang.IDeref
+      (deref [_] (deref-future fut))
+      clojure.lang.IBlockingDeref
+      (deref
+          [_ timeout-ms timeout-val]
+        (deref-future fut timeout-ms timeout-val))
+      clojure.lang.IPending
+      (isRealized [_] (.isDone fut))
+      java.util.concurrent.Future
+      (get [_] (.get fut))
+      (get [_ timeout unit] (.get fut timeout unit))
+      (isCancelled [_] (.isCancelled fut))
+      (isDone [_] (.isDone fut))
+      (cancel [_ interrupt?] (.cancel fut interrupt?)))))
 
 (defmacro future
   "Takes an executor instance and a body of expressions and yields a
@@ -122,8 +121,11 @@ corresponding Java instances"
    cache the result and return it on all subsequent calls to deref/@. If
    the computation has not yet finished, calls to deref/@ will block,
    unless the variant of deref with timeout is used.."
-  [options & body]
-  `(future-call (^{:once true} fn* [] ~@body) ~options))
+  [& args]
+  (assert (and (>= (count args) 2)
+               (map? (last args))))
+  `(future-call (^{:once true} fn* [] ~@(butlast args))
+                ~(last args)))
 
 (def thread-macro-executor (var-get #'async/thread-macro-executor))
 
@@ -132,24 +134,26 @@ corresponding Java instances"
   thread. An optional second argument allows to pass an executor that
   implements clojure.core.async.impl.protocols/Executor. Returns a
   channel which will receive the result of calling f when completed."
-  ([f] (thread-call f nil))
-  ([f {:keys [executor]}]
-   (let [c (async/chan 1)]
-     (let [binds (clojure.lang.Var/getThreadBindingFrame)]
-       (execute (or executor thread-macro-executor)
-                  (fn []
-                    (clojure.lang.Var/resetThreadBindingFrame binds)
-                    (try
-                      (let [ret (f)]
-                        (when-not (nil? ret)
-                          (async/>!! c ret)))
-                      (finally
-                        (async/close! c))))))
-     c)))
+  [f {:keys [executor]}]
+  (let [c (async/chan 1)]
+    (let [binds (clojure.lang.Var/getThreadBindingFrame)]
+      (execute (or executor thread-macro-executor)
+               (fn []
+                 (clojure.lang.Var/resetThreadBindingFrame binds)
+                 (try
+                   (let [ret (f)]
+                     (when-not (nil? ret)
+                       (async/>!! c ret)))
+                   (finally
+                     (async/close! c))))))
+    c))
 
 (defmacro thread
-  "Same as thread but takes an option map first:
+  "Same as thread but takes an additional option map of:
   :executor - An executor that implements
-clojure.core.async.impl.protocols/Executor"
-  [opts & body]
-  `(thread-call (fn [] ~@body) ~opts))
+  clojure.core.async.impl.protocols/Executor"
+  [& args]
+  (assert (and (>= (count args) 2)
+               (map? (last args))))
+  `(thread-call (fn [] ~@(butlast args))
+                ~(last args)))

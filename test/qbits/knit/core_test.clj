@@ -9,13 +9,14 @@
 
 (deftest test-futures
   (let [x (executor :single)]
-    (is (= 1 @(future {:executor x} 1)))
+    (is (= 1 @(future 1 {:executor x})))
     (is (= 1 @(future-call (constantly 1) {:executor x})))))
 
-;; (deftest test-thread
-;;   (let [x (executor :single) ]
-;;     (is (= 1 (async/<!! (thread 1 {:executor x}))))
-;;     (is (= 1 (async/<!! (thread-call {:executor x} (constantly 1)))))))
+(deftest test-thread
+  (let [x (executor :single) ]
+    (is (= 1 (async/<!! (thread 1 {:executor x}))))
+    (is (= 1 (async/<!! (thread-call (constantly 1)
+                                     {:executor x} ))))))
 
 (deftest test-executors
   (is (= Executors$FinalizableDelegatedExecutorService (class (executor :single))))

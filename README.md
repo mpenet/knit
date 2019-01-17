@@ -8,6 +8,15 @@ versions of `future`, `clojure.core.async/thread`,
 
 [![Clojars Project](https://img.shields.io/clojars/v/cc.qbits/knit.svg)](https://clojars.org/cc.qbits/knit)
 
+## Changelog
+
+### 1.0.0
+
+* **Breaking changes** : there are no longer a single arg versions of
+  `knit/future` and `knit/thread`, just use `clojure.core` equivalents
+  in these cases. Also the multi arg version of these 2 macros now
+  takes the option map as **last** argument instead of first.
+
 ## Usage
 
 ```Clojure
@@ -77,11 +86,11 @@ Time units are `:days` `:hours` `:minutes` `:seconds` `:milliseconds` `:microsec
 ### Clojure like future and core.async/thread* with configurable execution context
 
 ```clojure
-(qbits.knit/future {:executor x} (System/currentTimeMillis))
+(qbits.knit/future (System/currentTimeMillis) {:executor x})
 (qbits.knit/future-call #(System/currentTimeMillis) {:executor x})
 
 ;; core.async/thread
-(qbits.knit/thread {:executor x} (System/currentTimeMillis))
+(qbits.knit/thread (System/currentTimeMillis) {:executor x} )
 (qbits.knit/thread-call #(System/currentTimeMillis) {:executor x})
 ```
 
