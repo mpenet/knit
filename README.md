@@ -1,4 +1,4 @@
-# knit [![Build Status](https://secure.travis-ci.org/mpenet/knit.png?branch=master)](http://travis-ci.org/mpenet/knit)
+# knit [![Build Status](https://secure.travis-ci.org/mpenet/knit.png?branch=master)](http://travis-ci.org/mpenet/knit) [![cljdoc badge](https://cljdoc.xyz/badge/cc.qbits/spandex)](https://cljdoc.xyz/d/cc.qbits/knit/CURRENT)
 
 Thin wrapper around Java Executors/Threads, including executors aware
 versions of `future`, `clojure.core.async/thread`,
