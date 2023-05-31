@@ -1,12 +1,11 @@
 # knit [![Build Status](https://secure.travis-ci.org/mpenet/knit.png?branch=master)](http://travis-ci.org/mpenet/knit) [![cljdoc badge](https://cljdoc.xyz/badge/cc.qbits/spandex)](https://cljdoc.xyz/d/cc.qbits/knit/CURRENT)
 
 Thin wrapper around Java Executors/Threads, including executors aware
-versions of `future`, `clojure.core.async/thread`,
-`clojure.core.async/thread-call` and `future-call`.
+versions of `future` and `future-call`.
 
 ## Installation
 
-[![Clojars Project](https://img.shields.io/clojars/v/cc.qbits/knit.svg)](https://clojars.org/cc.qbits/knit)
+via tools.deps
 
 ## Changelog
 
@@ -83,16 +82,12 @@ With all options:
 Time units are `:days` `:hours` `:minutes` `:seconds` `:milliseconds` `:microseconds` `:nanoseconds`
 
 
-### Clojure like future and core.async/thread* with configurable execution context
+### Clojure like future  with configurable execution context
 
 ```clojure
 (qbits.knit/future (System/currentTimeMillis) {:executor x})
 (qbits.knit/future-call #(System/currentTimeMillis) {:executor x})
 
-;; core.async/thread
-(qbits.knit/thread (System/currentTimeMillis) {:executor x} )
-(qbits.knit/thread-call #(System/currentTimeMillis) {:executor x})
-```
 
 ## License
 

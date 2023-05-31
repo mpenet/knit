@@ -1,13 +1,12 @@
 (ns qbits.knit
   (:refer-clojure :exclude [future future-call])
   (:require
-   [qbits.commons.enum :as qc]
-   [clojure.core.async :as async]
-   [clojure.core.async.impl.protocols :as impl])
+   [qbits.commons.enum :as qc])
   (:import
-   [java.util.concurrent Executors ExecutorService Future
-    ScheduledExecutorService ScheduledFuture ScheduledThreadPoolExecutor
-    ThreadFactory TimeUnit]))
+   (java.util.concurrent Executors ExecutorService Future
+                         ScheduledFuture ScheduledThreadPoolExecutor
+                         ThreadFactory TimeUnit)
+   (java.util.concurrent.atomic AtomicLong)))
 
 (def time-units (qc/enum->map TimeUnit))
 
@@ -19,14 +18,18 @@
   ([^String name]
    (ThreadGroup. name)))
 
-(defn thread-factory
-  "Returns a new ThreadFactory instance"
-  [{:keys [daemon thread-group]
-    :or {daemon true}}]
-  (reify ThreadFactory
-    (newThread [_ f]
-      (doto (Thread. ^ThreadGroup thread-group ^Runnable f)
-        (.setDaemon (boolean daemon))))))
+(defn thread-factory [{:keys [fmt priority daemon]}]
+  (let [thread-cnt (AtomicLong. 0)]
+    (reify ThreadFactory
+      (newThread [_ f]
+        (let [thread (Thread. ^Runnable f)]
+          (when (some? daemon)
+            (.setDaemon thread (boolean daemon)))
+          (when fmt
+            (.setName thread (format fmt (.getAndIncrement thread-cnt))))
+          (when priority
+            (.setPriority thread (int priority)))
+          thread)))))
 
 (defn execute
   "Submits the fn to specified executor, returns a Future"
@@ -45,9 +48,10 @@
                thread-factory (Executors/defaultThreadFactory)}}]
    (case type
      :single (Executors/newSingleThreadExecutor thread-factory)
-     :cached  (Executors/newCachedThreadPool thread-factory)
-     :fixed  (Executors/newFixedThreadPool (int num-threads) thread-factory)
-     :scheduled (Executors/newScheduledThreadPool (int num-threads) thread-factory))))
+     :cached (Executors/newCachedThreadPool thread-factory)
+     :fixed (Executors/newFixedThreadPool (int num-threads) thread-factory)
+     :scheduled (Executors/newScheduledThreadPool (int num-threads) thread-factory)
+     :virtual (Executors/newVirtualThreadPerTaskExecutor))))
 
 (defn schedule
   "Return a ScheduledFuture.
@@ -104,7 +108,7 @@
       (deref [_] (deref-future fut))
       clojure.lang.IBlockingDeref
       (deref
-          [_ timeout-ms timeout-val]
+        [_ timeout-ms timeout-val]
         (deref-future fut timeout-ms timeout-val))
       clojure.lang.IPending
       (isRealized [_] (.isDone fut))
@@ -125,35 +129,4 @@
   (assert (and (>= (count args) 2)
                (map? (last args))))
   `(future-call (^{:once true} fn* [] ~@(butlast args))
-                ~(last args)))
-
-(def thread-macro-executor (var-get #'async/thread-macro-executor))
-
-(defn thread-call
-  "Executes f in another thread, returning immediately to the calling
-  thread. An optional second argument allows to pass an executor that
-  implements clojure.core.async.impl.protocols/Executor. Returns a
-  channel which will receive the result of calling f when completed."
-  [f {:keys [executor]}]
-  (let [c (async/chan 1)]
-    (let [binds (clojure.lang.Var/getThreadBindingFrame)]
-      (execute (or executor thread-macro-executor)
-               (fn []
-                 (clojure.lang.Var/resetThreadBindingFrame binds)
-                 (try
-                   (let [ret (f)]
-                     (when-not (nil? ret)
-                       (async/>!! c ret)))
-                   (finally
-                     (async/close! c))))))
-    c))
-
-(defmacro thread
-  "Same as thread but takes an additional option map of:
-  :executor - An executor that implements
-  clojure.core.async.impl.protocols/Executor"
-  [& args]
-  (assert (and (>= (count args) 2)
-               (map? (last args))))
-  `(thread-call (fn [] ~@(butlast args))
                 ~(last args)))

@@ -1,35 +1,27 @@
 (ns qbits.knit.core-test
   (:refer-clojure :exclude [future future-call])
-  (:use clojure.test
-        qbits.knit)
-  (:require [clojure.core.async :as async])
+  (:require [clojure.test :refer [deftest is]]
+            [qbits.knit :as k])
   (:import [java.util.concurrent ExecutorService ThreadPoolExecutor
             Executors$FinalizableDelegatedExecutorService
             ScheduledThreadPoolExecutor]))
 
 (deftest test-futures
-  (let [x (executor :single)]
-    (is (= 1 @(future 1 {:executor x})))
-    (is (= 1 @(future-call (constantly 1) {:executor x})))))
-
-(deftest test-thread
-  (let [x (executor :single) ]
-    (is (= 1 (async/<!! (thread 1 {:executor x}))))
-    (is (= 1 (async/<!! (thread-call (constantly 1)
-                                     {:executor x} ))))))
+  (let [x (k/executor :single)]
+    (is (= 1 @(k/future 1 {:executor x})))
+    (is (= 1 @(k/future-call (constantly 1) {:executor x})))))
 
 (deftest test-executors
-  (is (= Executors$FinalizableDelegatedExecutorService (class (executor :single))))
-  (is (= ThreadPoolExecutor (class (executor :cached))))
-  (is (= ScheduledThreadPoolExecutor (class (executor :scheduled))))
-  (is (= ThreadPoolExecutor (class (executor :fixed)))))
-
+  (is (= Executors$FinalizableDelegatedExecutorService (class (k/executor :single))))
+  (is (= ThreadPoolExecutor (class (k/executor :cached))))
+  (is (= ScheduledThreadPoolExecutor (class (k/executor :scheduled))))
+  (is (= ThreadPoolExecutor (class (k/executor :fixed)))))
 
 (deftest test-schedule
   (let [r (atom {:with-fixed-delay 0 :at-fixed-rate 0 :once 0})]
-    (schedule :once 1000 #(swap! r update-in [:once] inc))
-    (schedule :with-fixed-delay 1000 #(swap! r update-in [:with-fixed-delay] inc))
-    (schedule :at-fixed-rate 1000 #(swap! r update-in [:at-fixed-rate] inc))
+    (k/schedule :once 1000 #(swap! r update-in [:once] inc))
+    (k/schedule :with-fixed-delay 1000 #(swap! r update-in [:with-fixed-delay] inc))
+    (k/schedule :at-fixed-rate 1000 #(swap! r update-in [:at-fixed-rate] inc))
 
     (Thread/sleep 4500)
 
