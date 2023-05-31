@@ -1,0 +1,17 @@
+{:exoscale.project/lib cc.qbits/knit
+ :exoscale.project/version-file "VERSION"
+ :exoscale.project/deploy? true
+ :slipset.deps-deploy/exec-args {:installer :remote
+                                 :sign-releases? false
+                                 :repository "clojars"}
+
+ :deps {cc.qbits/commons {:mvn/version "1.0.0-alpha6"}}
+ :aliases
+ {:test
+  {:jvm-opts ["--enable-preview"]
+   :extra-deps {com.exoscale/eftest {:mvn/version "1.0.0"}}
+   :extra-paths ["dev" "test"]
+   :exec-fn test-runner/run}
+  :project {:deps {io.github.exoscale/tools.project {:git/sha "5f24196ebea4dc6e601d201d97b463ea26923c7e"}}
+            :ns-default exoscale.tools.project
+            :jvm-opts ["-Dclojure.main.report=stderr"]}}}
