@@ -40,11 +40,13 @@
 
 (defn executor
   "Returns an instances of an ExecutorService of the corresponding type.
-  `type` can be :single, :cached, :fixed, :scheduled, or :virtual"
+  `type` can be :single, :cached, :fixed, :scheduled, or :virtual
+  `opts` map may include `:thread-factory` (otherwise a default one will be used)
+         and `:num-threads` for :fixed and :scheduled executor (the default is 1)"
   ^ExecutorService
   ([type] (executor type nil))
   ([type {:keys [thread-factory num-threads]
-          :or {num-threads (int 1)}}]
+          :or {num-threads (int 1)} :as _opts}]
    (if (= :virtual type)
      (if (some? thread-factory)
        (do (assert (= ThreadBuilders$VirtualThreadFactory (type thread-factory)))
