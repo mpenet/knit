@@ -57,7 +57,7 @@
          :single (Executors/newSingleThreadExecutor thread-factory)
          :cached (Executors/newCachedThreadPool thread-factory)
          :fixed (Executors/newFixedThreadPool (int num-threads) thread-factory)
-         :scheduled (Executors/newScheduledThreadPool (int num-threads) thread-factory)))))
+         :scheduled (Executors/newScheduledThreadPool (int num-threads) thread-factory))))))
 
 (defn schedule
   "Return a ScheduledFuture.
