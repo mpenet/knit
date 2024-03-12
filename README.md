@@ -24,7 +24,7 @@ via tools.deps
 
 ### Executors
 
-Executor can be `:fixed` `:cached` `:single` `:scheduled`, matching the
+Executor can be `:fixed` `:cached` `:single` `:scheduled` `:virtual`, matching the
 corresponding Java instances.
 
 ```Clojure
