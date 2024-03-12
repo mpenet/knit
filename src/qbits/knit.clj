@@ -49,7 +49,7 @@
           :or {num-threads (int 1)} :as _opts}]
    (if (= :virtual type)
      (if (some? thread-factory)
-       (do (assert (= ThreadBuilders$VirtualThreadFactory (type thread-factory)))
+       (do (assert (= ThreadBuilders$VirtualThreadFactory (class thread-factory)))
            (Executors/newThreadPerTaskExecutor thread-factory))
        (Executors/newVirtualThreadPerTaskExecutor))
      (let [thread-factory (or thread-factory (Executors/defaultThreadFactory))]
