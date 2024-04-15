@@ -18,7 +18,8 @@
   ([^String name]
    (ThreadGroup. name)))
 
-(defn thread-factory [{:keys [fmt priority daemon]}]
+(defn thread-factory [& {:keys [fmt priority daemon]}]
+  (prn fmt)
   (let [thread-cnt (AtomicLong. 0)]
     (reify ThreadFactory
       (newThread [_ f]
@@ -43,9 +44,9 @@
   corresponding Java instances"
   ^ExecutorService
   ([type] (executor type nil))
-  ([type {:keys [thread-factory num-threads]
-          :or {num-threads (int 1)
-               thread-factory (Executors/defaultThreadFactory)}}]
+  ([type & {:keys [thread-factory num-threads]
+            :or {num-threads (int 1)
+                 thread-factory (Executors/defaultThreadFactory)}}]
    (case type
      :single (Executors/newSingleThreadExecutor thread-factory)
      :cached (Executors/newCachedThreadPool thread-factory)
@@ -60,9 +61,9 @@
   `f` task (function) to be run"
   ^ScheduledFuture
   ([type delay f] (schedule type delay f nil))
-  ([type delay f {:keys [executor initial-delay unit]
-                  :or {initial-delay 0
-                       unit :milliseconds}}]
+  ([type delay f & {:keys [executor initial-delay unit]
+                    :or {initial-delay 0
+                         unit :milliseconds}}]
    (let [executor (or executor (qbits.knit/executor :scheduled))]
      (case type
        :with-fixed-delay
