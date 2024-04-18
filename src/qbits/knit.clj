@@ -1,12 +1,10 @@
 (ns qbits.knit
   (:refer-clojure :exclude [future future-call])
-  (:require
-   [qbits.commons.enum :as qc])
-  (:import
-   (java.util.concurrent Executors ExecutorService Future
-                         ScheduledFuture ScheduledThreadPoolExecutor
-                         ThreadFactory TimeUnit)
-   (java.util.concurrent.atomic AtomicLong)))
+  (:require [qbits.commons.enum :as qc])
+  (:import (java.util.concurrent Executors ExecutorService Future
+                                 ScheduledFuture ScheduledThreadPoolExecutor
+                                 ThreadFactory TimeUnit)
+           (java.util.concurrent.atomic AtomicLong)))
 
 (def time-units (qc/enum->map TimeUnit))
 
@@ -19,7 +17,6 @@
    (ThreadGroup. name)))
 
 (defn thread-factory [& {:keys [fmt priority daemon]}]
-  (prn fmt)
   (let [thread-cnt (AtomicLong. 0)]
     (reify ThreadFactory
       (newThread [_ f]
@@ -52,6 +49,8 @@
      :cached (Executors/newCachedThreadPool thread-factory)
      :fixed (Executors/newFixedThreadPool (int num-threads) thread-factory)
      :scheduled (Executors/newScheduledThreadPool (int num-threads) thread-factory)
+     :scheduled-single (Executors/newSingleThreadScheduledExecutor thread-factory)
+     :thread-per-task (Executors/newThreadPerTaskExecutor thread-factory)
      :virtual (Executors/newVirtualThreadPerTaskExecutor))))
 
 (defn schedule
