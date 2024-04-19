@@ -29,11 +29,15 @@
             (.setPriority thread (int priority)))
           thread)))))
 
-(defn execute
+(defn submit
   "Submits the fn to specified executor, returns a Future"
   ^Future
   [^ExecutorService executor ^Callable f]
   (.submit executor f))
+
+(def ^:deprecated execute
+  "Submits the fn to specified executor, returns a Future"
+  submit)
 
 (defn executor
   "Returns ExecutorService.

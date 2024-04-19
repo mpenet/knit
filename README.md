@@ -37,7 +37,7 @@ With all options
 
 Submit a task to executor
 ```clojure
-(execute x #(println "Hello World"))
+(submit x #(println "Hello World"))
 ```
 
 ### ThreadFactory
