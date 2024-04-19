@@ -2,7 +2,8 @@
   (:refer-clojure :exclude [future future-call])
   (:require [qbits.commons.enum :as qc])
   (:import (java.util.concurrent Executors ExecutorService Future
-                                 ScheduledFuture ScheduledThreadPoolExecutor
+                                 ScheduledFuture
+                                 ScheduledExecutorService
                                  ThreadFactory TimeUnit)
            (java.util.concurrent.atomic AtomicLong)))
 
@@ -70,18 +71,18 @@
    (let [executor (or executor (qbits.knit/executor :scheduled))]
      (case type
        :with-fixed-delay
-       (.scheduleWithFixedDelay ^ScheduledThreadPoolExecutor executor
+       (.scheduleWithFixedDelay ^ScheduledExecutorService executor
                                 ^Runnable f
                                 ^long initial-delay
                                 ^long delay
                                 (time-units unit))
        :at-fixed-rate
-       (.scheduleAtFixedRate ^ScheduledThreadPoolExecutor executor
+       (.scheduleAtFixedRate ^ScheduledExecutorService executor
                              ^Runnable f
                              ^long initial-delay
                              ^long delay
                              (time-units unit))
-       :once (.schedule ^ScheduledThreadPoolExecutor executor
+       :once (.schedule ^ScheduledExecutorService executor
                         ^Runnable f
                         ^long delay
                         ^TimeUnit (time-units unit))))))
