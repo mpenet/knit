@@ -24,8 +24,8 @@ via tools.deps
 
 ### Executors
 
-Executor can be `:fixed` `:cached` `:single` `:scheduled`, matching the
-corresponding Java instances.
+Executor can be `:fixed` `:cached` `:single` `:scheduled` `:scheduled-single` `:thread-per-task` `:virtual`,
+matching the corresponding Java instances.
 
 ```Clojure
 (def x (executor :fixed))

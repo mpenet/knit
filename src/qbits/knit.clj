@@ -1,7 +1,8 @@
 (ns qbits.knit
   (:refer-clojure :exclude [future future-call])
   (:require [qbits.commons.enum :as qc])
-  (:import (java.util.concurrent Executors ExecutorService Future
+  (:import (java.lang ThreadBuilders$VirtualThreadFactory)
+           (java.util.concurrent Executors ExecutorService Future
                                  ScheduledFuture
                                  ScheduledExecutorService
                                  ThreadFactory TimeUnit)
@@ -41,22 +42,28 @@
   submit)
 
 (defn executor
-  "Returns ExecutorService.
-  `type` can be :single, :cached, :fixed or :scheduled, this matches the
-  corresponding Java instances"
+  "Returns an instances of an ExecutorService of the corresponding type.
+  `type` can be :single, :cached, :fixed, :scheduled, :scheduled-single,
+         :thread-per-task, or :virtual
+  `opts` map may include `:thread-factory` (otherwise a default one will be used)
+         and `:num-threads` for :fixed and :scheduled executor (the default is 1)"
   ^ExecutorService
   ([type] (executor type nil))
   ([type & {:keys [thread-factory num-threads]
-            :or {num-threads (int 1)
-                 thread-factory (Executors/defaultThreadFactory)}}]
-   (case type
-     :single (Executors/newSingleThreadExecutor thread-factory)
-     :cached (Executors/newCachedThreadPool thread-factory)
-     :fixed (Executors/newFixedThreadPool (int num-threads) thread-factory)
-     :scheduled (Executors/newScheduledThreadPool (int num-threads) thread-factory)
-     :scheduled-single (Executors/newSingleThreadScheduledExecutor thread-factory)
-     :thread-per-task (Executors/newThreadPerTaskExecutor thread-factory)
-     :virtual (Executors/newVirtualThreadPerTaskExecutor))))
+            :or {num-threads (int 1)} :as _opts}]
+   (if (= :virtual type)
+     (if (some? thread-factory)
+       (do (assert (= ThreadBuilders$VirtualThreadFactory (class thread-factory)))
+           (Executors/newThreadPerTaskExecutor thread-factory))
+       (Executors/newVirtualThreadPerTaskExecutor))
+     (let [thread-factory (or thread-factory (Executors/defaultThreadFactory))]
+       (case type
+         :single (Executors/newSingleThreadExecutor thread-factory)
+         :cached (Executors/newCachedThreadPool thread-factory)
+         :fixed (Executors/newFixedThreadPool (int num-threads) thread-factory)
+         :scheduled (Executors/newScheduledThreadPool (int num-threads) thread-factory)
+         :scheduled-single (Executors/newSingleThreadScheduledExecutor thread-factory)
+         :thread-per-task (Executors/newThreadPerTaskExecutor thread-factory))))))
 
 (defn schedule
   "Return a ScheduledFuture.
