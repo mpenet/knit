@@ -7,6 +7,8 @@
                                  ThreadFactory TimeUnit)
            (java.util.concurrent.atomic AtomicLong)))
 
+(set! *warn-on-reflection* true)
+
 (def time-units (qc/enum->map TimeUnit))
 
 (defn thread-group
@@ -99,7 +101,7 @@
   of deref with timeout is used. See also - realized?."
   {:added "1.1"
    :static true}
-  [f {:as options
+  [f {:as _options
       :keys [executor preserve-bindings?]
       :or {preserve-bindings? true
            executor clojure.lang.Agent/soloExecutor}}]
@@ -107,7 +109,7 @@
   (let [f (if preserve-bindings?
             (binding-conveyor-fn f)
             f)
-        fut (execute executor f)]
+        fut (submit executor f)]
     (reify
       clojure.lang.IDeref
       (deref [_] (deref-future fut))
